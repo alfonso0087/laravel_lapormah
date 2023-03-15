@@ -39,6 +39,32 @@ class LaporanController extends Controller
     }
   }
 
+  public function getLaporanByMahasiswa(Request $request)
+  {
+    $nim = $request->nim;
+    $laporan = Lapor::where('nim', $nim)->get();
+    if (count($laporan) > 0) {
+      foreach ($laporan as $lapor) {
+        if ($lapor->image != null) {
+          $lapor->image = url('image_laporan/' . $lapor->code . '/' . $lapor->image);
+        } else {
+          $lapor->image = null;
+        }
+      }
+      return response()->json([
+        'status' => 'success',
+        'message' => 'Data laporan berhasil diambil',
+        'data' => $laporan
+      ], 200);
+    } else {
+      return response()->json([
+        'status' => 'error',
+        'message' => 'Data laporan tidak ditemukan',
+        'data' => null
+      ], 404);
+    }
+  }
+
   /**
    * Show the form for creating a new resource.
    *
