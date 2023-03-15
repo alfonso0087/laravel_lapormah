@@ -44,7 +44,9 @@ class AuthController extends Controller
         'message' => 'Data tidak lengkap'
       ], 'Login Gagal', 400);
     } else {
-      $mhs = Mahasiswa::where('nim', $nim)->first();
+      // $mhs = Mahasiswa::where('nim', $nim)->first();
+      $mhs = new Mahasiswa();
+      $mhs = $mhs->where('nim', $nim)->first();
 
       if (!$mhs) {
         return ResponseFormatter::error([
