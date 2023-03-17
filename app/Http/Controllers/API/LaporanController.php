@@ -160,7 +160,11 @@ class LaporanController extends Controller
   {
     $code = $request->code;
 
-    $lapor = Lapor::where('code', $code)->first();
+    // ! On local machine, this works:
+    // $lapor = Lapor::where('code', $code)->first();
+
+    // ! On production server, this works:
+    $lapor = Lapor::where('lapor.code', $code)->first();
     if ($lapor) {
       if ($lapor->image != null) {
         $lapor->image = url('image_laporan/' . $lapor->code . '/' . $lapor->image);
