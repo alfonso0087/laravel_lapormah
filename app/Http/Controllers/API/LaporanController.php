@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lapor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use ResponseFormatter;
 
 class LaporanController extends Controller
 {
@@ -25,17 +26,14 @@ class LaporanController extends Controller
           $lapor->image = null;
         }
       }
-      return response()->json([
-        'status' => 'success',
-        'message' => 'Data laporan berhasil diambil',
-        'data' => $laporan
-      ], 200);
+      return ResponseFormatter::success(
+        ['list_laporan' => $laporan],
+        'Data laporan berhasil diambil'
+      );
     } else {
-      return response()->json([
-        'status' => 'error',
-        'message' => 'Data laporan tidak ditemukan',
-        'data' => null
-      ], 404);
+      return ResponseFormatter::error([
+        'message' => 'Data laporan tidak ditemukan'
+      ], 'Data laporan tidak ditemukan', 400);
     }
   }
 
@@ -55,17 +53,14 @@ class LaporanController extends Controller
           $lapor->image = null;
         }
       }
-      return response()->json([
-        'status' => 'success',
-        'message' => 'Data laporan berhasil diambil',
-        'data' => $laporan
-      ], 200);
+      return ResponseFormatter::success(
+        ['list_laporan' => $laporan],
+        'Data laporan berhasil diambil'
+      );
     } else {
-      return response()->json([
-        'status' => 'error',
-        'message' => 'Data laporan tidak ditemukan',
-        'data' => null
-      ], 404);
+      return ResponseFormatter::error([
+        'message' => 'Data laporan tidak ditemukan'
+      ], 'Data laporan tidak ditemukan', 400);
     }
   }
 
@@ -92,6 +87,12 @@ class LaporanController extends Controller
     $code_category = $request->code_category;
     $description = $request->description;
 
+    if ($nim == null || $code_category == null || $description == null) {
+      return ResponseFormatter::error([
+        'message' => 'Data tidak boleh kosong'
+      ], 'Data tidak boleh kosong', 400);
+    }
+
     $image = $request->file('image');
     if ($image) {
       $image_name = $this->uploadImage($image, $code);
@@ -114,11 +115,10 @@ class LaporanController extends Controller
       $lapor->image = null;
     }
 
-    return response()->json([
-      'status' => 'success',
-      'message' => 'Laporan berhasil ditambahkan',
-      'data' => $lapor
-    ], 200);
+    return ResponseFormatter::success(
+      ['laporan' => $lapor],
+      'Laporan berhasil dibuat'
+    );
   }
 
   private function generateCode()
@@ -171,17 +171,14 @@ class LaporanController extends Controller
       } else {
         $lapor->image = null;
       }
-      return response()->json([
-        'status' => 'success',
-        'message' => 'Data laporan berhasil diambil',
-        'data' => $lapor
-      ], 200);
+      return ResponseFormatter::success(
+        ['detail_laporan' => $lapor],
+        'Data kategori laporan berhasil diambil'
+      );
     } else {
-      return response()->json([
-        'status' => 'error',
-        'message' => 'Data laporan tidak ditemukan',
-        'data' => null
-      ], 404);
+      return ResponseFormatter::error([
+        'message' => 'Data laporan tidak ditemukan'
+      ], 'Data laporan tidak ditemukan', 400);
     }
   }
 
@@ -209,7 +206,8 @@ class LaporanController extends Controller
     $description = $request->description;
     $image = $request->file('image');
 
-    $lapor = Lapor::where('code', $code)->first();
+    // $lapor = Lapor::where('code', $code)->first();
+    $lapor = Lapor::where('lapor.code', $code)->first();
 
     if ($lapor) {
       if ($image) {
@@ -225,17 +223,14 @@ class LaporanController extends Controller
         $lapor->image = null;
       }
 
-      return response()->json([
-        'status' => 'success',
-        'message' => 'Data laporan berhasil diubah',
-        'data' => $lapor
-      ], 200);
+      return ResponseFormatter::success(
+        ['laporan' => $lapor],
+        'Laporan berhasil diubah'
+      );
     } else {
-      return response()->json([
-        'status' => 'error',
-        'message' => 'Data laporan tidak ditemukan',
-        'data' => null
-      ], 404);
+      return ResponseFormatter::error([
+        'message' => 'Data laporan tidak ditemukan'
+      ], 'Data laporan tidak ditemukan', 400);
     }
   }
 
@@ -249,7 +244,8 @@ class LaporanController extends Controller
   {
     $code = $request->code;
 
-    $lapor = Lapor::where('code', $code)->first();
+    // $lapor = Lapor::where('code', $code)->first();
+    $lapor = Lapor::where('lapor.code', $code)->first();
     if ($lapor) {
       if ($lapor->image != null) {
         // Delete image
@@ -257,17 +253,14 @@ class LaporanController extends Controller
       }
       $lapor->delete();
 
-      return response()->json([
-        'status' => 'success',
-        'message' => 'Data laporan berhasil dihapus',
-        'data' => null
-      ], 200);
+      return ResponseFormatter::success(
+        ['message' => 'Laporan berhasil dihapus'],
+        'Laporan berhasil dihapus'
+      );
     } else {
-      return response()->json([
-        'status' => 'error',
-        'message' => 'Data laporan tidak ditemukan',
-        'data' => null
-      ], 404);
+      return ResponseFormatter::error([
+        'message' => 'Data laporan tidak ditemukan'
+      ], 'Data laporan tidak ditemukan', 400);
     }
   }
 }
