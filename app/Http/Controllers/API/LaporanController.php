@@ -173,7 +173,7 @@ class LaporanController extends Controller
       }
       return ResponseFormatter::success(
         ['detail_laporan' => $lapor],
-        'Data kategori laporan berhasil diambil'
+        'Datalaporan berhasil diambil'
       );
     } else {
       return ResponseFormatter::error([
