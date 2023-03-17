@@ -42,7 +42,11 @@ class LaporanController extends Controller
   public function getLaporanByMahasiswa(Request $request)
   {
     $nim = $request->nim;
-    $laporan = Lapor::where('nim', $nim)->get();
+    //! On local machine, this works:
+    // $laporan = Lapor::where('nim', $nim)->get();
+
+    //! On production server, this works:
+    $laporan = Lapor::where('mahasiswa.nim', '==', $nim)->get();
     if (count($laporan) > 0) {
       foreach ($laporan as $lapor) {
         if ($lapor->image != null) {
